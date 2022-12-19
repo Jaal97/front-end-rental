@@ -1,18 +1,19 @@
-import React, { Component } from "react";
 import { UseForm } from "./UseForm";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const EditarAgenda = () => {
     let params = useParams();
     const local_url = 'http://localhost:8080/agendas';
+    const server_url = 'http://129.213.28.70:8080/agendas'
 
     const [value, handleInputChange, reset] = UseForm({ id_auto: params.id_auto, marca: params.marcaauto, modelo: params.modelo, fecha: params.fecha });
     const { id_auto, marca, modelo, fecha } = value;
 
    
     const update = () => {
-        fetch(local_url + '/update', {
+        fetch(server_url + '/update', {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
@@ -29,7 +30,6 @@ const EditarAgenda = () => {
             .then(res => {
                 console.log(res);
             });
-        reset()
         alert('Se ha Actualizado correctamente')
     }
 
@@ -53,13 +53,12 @@ const EditarAgenda = () => {
                 <input type="date" className="form-control" id="fecha" onChange={handleInputChange} name='fecha' value={fecha} />
             </div>
             <div className="row">
-                {/* <button type="button " className="btn btn-primary col-2 m-2" id="visualizar" onClick={visualizar}>Visualizar</button> */}
-                {/* <button type="button" className="btn btn-warning col-2 m-2" id="registrar" onClick={save}>Registrar</button> */}
-                <button type="button" className="btn btn-primary col-2 m-2" id="actualizar" onClick={update}>Actualizar</button>
+                    <button type="button" className="btn btn-primary col-2 m-2" id="actualizar" onClick={update} >Actualizar</button>
+                    <Link to={'/Agendas'} className="btn btn-warning col-2 m-2" >Regresar
+                    </Link>
             </div>
         </form>
     </>
-
 }
 
 export default EditarAgenda

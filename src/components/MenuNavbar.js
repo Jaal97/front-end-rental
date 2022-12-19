@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+
 const MenuNavbar = () => {
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
                 <div className="container-fluid">
                     <Link to='/'>
                        <img src="./sports.png" width='100px'>
@@ -29,6 +30,7 @@ const MenuNavbar = () => {
                             </li>
                         </ul>
                     </div>
+                    
                 </div>
             </nav>
         </>

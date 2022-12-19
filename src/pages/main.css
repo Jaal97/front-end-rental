@@ -1,0 +1,41 @@
+
+
+.container-img{
+    width: 100vw;
+    
+}
+
+.container-img img{
+    padding-top: 100px;
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
+.menu-principal{
+    width: 100vh;
+
+}
+
+.container-title{
+    text-decoration: none;
+}
+
+.title-home{
+    font-weight: bold;
+    text-align: center;
+    font-size: 2.3rem;
+    color: darkslategray;
+}
+
+.logo{
+    margin-top: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo img{
+    align-self: flex-end;
+    width: 40px;
+    margin-top: 8px;
+}
