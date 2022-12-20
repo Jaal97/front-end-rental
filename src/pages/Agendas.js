@@ -6,33 +6,37 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import './main.css'
+import swal from 'sweetalert';
 
 
 const Agendas = () => {
     const [value, handleInputChange, reset] = UseForm({ id_auto: '', marca: '', modelo: '', fecha: '' });
     const { id_auto, marca, modelo, fecha } = value;
-    
+
     const local_url = 'http://localhost:8080/agendas';
     const server_url = 'http://129.213.28.70:8080/agendas'
     const [objetos, setObjetos] = useState()
-   
-    const get_api = async () => {
-        const response = await fetch(server_url + '/all')
-        // console.log(response.status)
-        const responseJSON = await response.json()
-        setObjetos(responseJSON)
+
+    const get_api = () => {
+        fetch(server_url + '/all')
+        .then(response => response.json())
+        .then(data => setObjetos(data));
     }
 
     useEffect(() => {
         get_api()
-        
+
     }, [])
 
     const save = () => {
+        let capMa = marca[0].toUpperCase() + marca.substring(1);
+        let capMo = modelo[0].toUpperCase() + modelo.substring(1);
+
         let data = {
             id_auto: id_auto,
-            marcaauto: marca,
-            modelo: modelo,
+            marcaauto: capMa,
+            modelo: capMo,
             fecha: fecha
         }
         if (id_auto != '' && marca != '' && modelo != '' && fecha != '') {
@@ -45,17 +49,46 @@ const Agendas = () => {
             }).then(res => res.json())
                 .catch(error => console.error('Error:', error))
                 .then(response => console.log('Succes:', response))
-            alert('Se guardo la Agenda con exito')
             get_api()
+            swal({
+                title: "Guardado",
+                text: "Se ha guardado con exito la agenda",
+                icon: "success",
+                buttons: "OK"
+            });
+            
             reset()
         } else {
-            alert('No puedes enviar campos vacios');
+            swal({
+                title: "Error",
+                text: "¡No puedes enviar campos vacios!",
+                icon: "warning",
+                buttons: "OK"
+            });
         }
     }
-    
+
     const load_data = (id_auto) => {
         console.log(id_auto)
     }
+
+    const confirmDelete = (id) => {
+        swal({
+            title: "Eliminar elemento",
+            text: "Estas seguro de eliminar el elemento seleccionado!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    deleteId(id)
+                } else {
+                    swal("El elemento seleccionado esta ha salvo!");
+                }
+            });
+    }
+
 
     const deleteId = (id) => {
         JSON.stringify(id)
@@ -67,14 +100,19 @@ const Agendas = () => {
         }).then(res => res.json())
             .catch(error => console.error('Error:', error))
             .then(response => console.log('Succes:', response))
-        alert('Se ha eliminado correctamente la agenda')
-        get_api()
+        get_api();
+        swal({
+            title: "Eliminado",
+            text: "Se ha eliminado la agenda",
+            icon: "success",
+            buttons: "OK"
+        });
     }
 
     return (
         <>
             <h3 className="container">
-                Lista de Agendas
+                Agendas
             </h3>
             <form className="container">
                 <div className="mb-3">
@@ -94,8 +132,8 @@ const Agendas = () => {
                     <input type="date" className="form-control" id="fecha" onChange={handleInputChange} name='fecha' value={fecha} />
                 </div>
                 <div className="row">
-                    <button type="button" title="Editar" className="btn btn-warning col-2 m-2" id="registrar" onClick={save}>Registrar</button>
-                    {/* <button type="button" className="btn btn-primary col-2 m-2" id="actualizar" >Actualizar</button> */}
+                    <button type="button" title="Editar" className="btn btn-success col-2 m-2" id="registrar" onClick={save}>Registrar</button>
+                    <button type="button" title="Editar" className="btn btn-primary col-2 m-2" id="registrar" onClick={get_api}>Refrescar</button>
                 </div>
             </form>
             <div>
@@ -109,7 +147,6 @@ const Agendas = () => {
                                             <th>Marca</th>
                                             <th>Modelo</th>
                                             <th>Fecha</th>
-                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -117,15 +154,15 @@ const Agendas = () => {
                                         <td>{objeto.modelo}</td>
                                         <td>{objeto.fecha}</td>
                                         <td>
-                                            <Link to={'/editar_agenda/'+ objeto.id+'/'+objeto.id_auto+'/'+objeto.marcaauto+'/'+objeto.modelo+'/'+objeto.fecha}>
-                                            <button className="btn btn-primary" onClick={() => {
-                                                load_data(objeto.id_auto)
-                                            }}>
-                                                <FontAwesomeIcon icon={faEdit} />
-                                            </button>
+                                            <Link to={'/editar_agenda/' + objeto.id + '/' + objeto.id_auto + '/' + objeto.marcaauto + '/' + objeto.modelo + '/' + objeto.fecha}>
+                                                <button className="btn btn-primary" onClick={() => {
+                                                    load_data(objeto.id_auto)
+                                                }}>
+                                                    <FontAwesomeIcon icon={faEdit} />
+                                                </button>
                                             </Link>
-                                            <button className="btn btn-danger" onClick={() => {
-                                                deleteId(objeto.id)
+                                            <button className="btn btn-danger active btn-eraser" onClick={() => {
+                                                confirmDelete(objeto.id)
                                             }}>
                                                 <FontAwesomeIcon icon={faTrashAlt} />
                                             </button>

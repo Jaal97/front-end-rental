@@ -5,7 +5,7 @@ import './main.css';
 const Home = () => {
     return (
         <>
-            <a href='https://github.com/Jaal97' className="logo">
+            <a href='https://github.com/Jaal97?tab=repositories' className="logo" target="_blank">
                 <img src="./25231.png" ></img>
             </a>
             <Link to="/agendas" className="container-title">

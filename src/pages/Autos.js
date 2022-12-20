@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import swal from 'sweetalert';
 
 
 const Autos = () => {
@@ -17,11 +18,10 @@ const Autos = () => {
   const server_url = 'http://129.213.28.70:8080/autos'
   const [objetos, setObjetos] = useState()
 
-  const get_api = async () => {
-    const response = await fetch(server_url + '/all')
-    // console.log(response.status)
-    const responseJSON = await response.json()
-    setObjetos(responseJSON)
+  const get_api = () => {
+    fetch(server_url + '/all')
+      .then(response => response.json())
+      .then(data => setObjetos(data));
   }
 
   useEffect(() => {
@@ -29,11 +29,15 @@ const Autos = () => {
   }, [])
 
   const save = () => {
+    let capMa = marca[0].toUpperCase() + marca.substring(1);
+    let mayuMa = matricula.toUpperCase();
+    let capMo = modelo[0].toUpperCase() + modelo.substring(1);
+
     let data = {
       ndeserie: ndeserie,
-      marca: marca,
-      matricula: matricula,
-      modelo: modelo
+      marca: capMa,
+      matricula: mayuMa,
+      modelo: capMo
     }
     if (ndeserie != '' && marca != '' && matricula != '' && modelo != '') {
       fetch(server_url + '/save', {
@@ -45,12 +49,39 @@ const Autos = () => {
       }).then(res => res.json())
         .catch(error => console.error('Error:', error))
         .then(response => console.log('Succes:', response))
-      alert('Se guardo el auto con exito')
+      swal({
+        title: "Guardado",
+        text: "Se ha guardado con exito el nuevo auto",
+        icon: "success",
+        buttons: "OK"
+      });
       get_api()
       reset()
     } else {
-      alert('No puedes enviar campos vacios');
+      swal({
+        title: "Error",
+        text: "¡No puedes enviar campos vacios!",
+        icon: "warning",
+        buttons: "OK"
+      });
     }
+  }
+
+  const confirmDelete = (id) => {
+    swal({
+      title: "Eliminar elemento",
+      text: "Estas seguro de eliminar el elemento seleccionado!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+      .then((willDelete) => {
+        if (willDelete) {
+          deleteId(id)
+        } else {
+          swal("El elemento seleccionado esta ha salvo!");
+        }
+      });
   }
 
   const deleteId = (id) => {
@@ -63,7 +94,12 @@ const Autos = () => {
     }).then(res => res.json())
       .catch(error => console.error('Error:', error))
       .then(response => console.log('Succes:', response))
-    alert('Se ha eliminado correctamente la agenda')
+    swal({
+      title: "Eliminado",
+      text: "Se ha eliminado el auto",
+      icon: "success",
+      buttons: "OK"
+    });
     get_api()
   }
 
@@ -89,8 +125,8 @@ const Autos = () => {
           <input type="text" className="form-control" id="modelo" onChange={handleInputChange} name="modelo" value={modelo} />
         </div>
         <div className="row">
-          <button type="button" className="btn btn-primary col-2 m-2" id="registrar" onClick={save}>Registrar</button>
-          {/* <button type="submit" className="btn btn-danger col-2 m-2" id="actualizar" onClick={}>Actualizar</button> */}
+          <button type="button" className="btn btn-success col-2 m-2" id="registrar" onClick={save}>Registrar</button>
+          <button type="button" title="Editar" className="btn btn-primary col-2 m-2" id="registrar" onClick={get_api}>Refrescar</button>
         </div>
       </form>
       <div>
@@ -118,8 +154,8 @@ const Autos = () => {
                           <FontAwesomeIcon icon={faEdit} />
                         </button>
                       </Link>
-                      <button className="btn btn-danger" onClick={() => {
-                        deleteId(objeto.id)
+                      <button className="btn btn-danger active" onClick={() => {
+                        confirmDelete(objeto.id)
                       }}>
                         <FontAwesomeIcon icon={faTrashAlt} />
                       </button>

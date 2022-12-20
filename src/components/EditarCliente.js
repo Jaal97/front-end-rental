@@ -2,6 +2,7 @@ import { UseForm } from "./UseForm";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import swal from 'sweetalert';
 
 const EditarCliente = () => {
 
@@ -30,7 +31,13 @@ const EditarCliente = () => {
             .then(res => {
                 console.log(res);
             });
-        alert('Se ha Actualizado correctamente')
+        swal({
+            title: "Actualizado",
+            text: "Has actualizado correctamente el cliente!",
+            icon: "success",
+            button: "OK"
+
+        })
     }
 
 
@@ -56,13 +63,13 @@ const EditarCliente = () => {
                 </div>
                 <div className="row">
                     <button type="button" className="btn btn-primary col-2 m-2" id="registrar" onClick={update} >Actualizar</button>
-                    <Link to={'/clientes'} className="btn btn-warning col-2 m-2">
+                    <Link to={'/clientes'} className="btn btn-info col-2 m-2">
                         Regresar
                     </Link>
                 </div>
             </form>
         </>
     )
-} 
+}
 
 export default EditarCliente

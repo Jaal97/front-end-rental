@@ -1,8 +1,5 @@
-
-
 .container-img{
     width: 100vw;
-    
 }
 
 .container-img img{
@@ -10,11 +7,6 @@
     width: 100%;
     display: block;
     margin: auto;
-}
-
-.menu-principal{
-    width: 100vh;
-
 }
 
 .container-title{
@@ -38,4 +30,8 @@
     align-self: flex-end;
     width: 40px;
     margin-top: 8px;
+}
+
+.btn-eraser:hover{
+    background-color: lightcoral;
 }

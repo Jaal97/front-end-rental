@@ -2,6 +2,7 @@ import { UseForm } from "./UseForm";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import swal from 'sweetalert';
 
 const EditarAgenda = () => {
     let params = useParams();
@@ -13,6 +14,9 @@ const EditarAgenda = () => {
 
    
     const update = () => {
+        let capMa = marca[0].toUpperCase() + marca.substring(1);
+        let capMo = modelo[0].toUpperCase() + modelo.substring(1);
+
         fetch(server_url + '/update', {
             method: 'PUT',
             headers: {
@@ -21,8 +25,8 @@ const EditarAgenda = () => {
             body: JSON.stringify({ 
                 id: params.id,
                 id_auto: id_auto,
-                marcaauto: marca,
-                modelo: modelo,
+                marcaauto: capMa,
+                modelo: capMo,
                 fecha: fecha
             })
         })
@@ -30,7 +34,13 @@ const EditarAgenda = () => {
             .then(res => {
                 console.log(res);
             });
-        alert('Se ha Actualizado correctamente')
+        swal({
+            title: "Actualizado",
+            text: "Has actualizado correctamente la agenda!",
+            icon: "success",
+            button: "OK"
+            
+        })
     }
 
 
@@ -54,7 +64,7 @@ const EditarAgenda = () => {
             </div>
             <div className="row">
                     <button type="button" className="btn btn-primary col-2 m-2" id="actualizar" onClick={update} >Actualizar</button>
-                    <Link to={'/Agendas'} className="btn btn-warning col-2 m-2" >Regresar
+                    <Link to={'/Agendas'} className="btn btn-info col-2 m-2" >Regresar
                     </Link>
             </div>
         </form>

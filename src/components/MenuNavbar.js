@@ -37,5 +37,4 @@ const MenuNavbar = () => {
     );
 }
 
-
 export default MenuNavbar;

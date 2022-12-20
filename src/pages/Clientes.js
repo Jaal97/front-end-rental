@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-
+import swal from 'sweetalert';
 
 const Clientes = () => {
 
@@ -18,10 +18,9 @@ const Clientes = () => {
     const [objetos, setObjetos] = useState()
 
     const get_api = async () => {
-        const response = await fetch(server_url + '/all')
-        // console.log(response.status)
-        const responseJSON = await response.json()
-        setObjetos(responseJSON)
+        fetch(server_url + '/all')
+            .then(response => response.json())
+            .then(data => setObjetos(data));
     }
 
     useEffect(() => {
@@ -30,9 +29,12 @@ const Clientes = () => {
     }, [])
 
     const save = () => {
+        let capN = nombre[0].toUpperCase() + nombre.substring(1);
+        let capA = apellido[0].toUpperCase() + apellido.substring(1);
+
         let data = {
-            nombre: nombre,
-            apellido: apellido,
+            nombre: capN,
+            apellido: capA,
             ndocumento: ndocumento,
             direccion: direccion
         }
@@ -46,14 +48,40 @@ const Clientes = () => {
             }).then(res => res.json())
                 .catch(error => console.error('Error:', error))
                 .then(response => console.log('Succes:', response))
-            alert('Se guardo el cliente con exito')
+            swal({
+                title: "Guardado",
+                text: "Se ha guardado con exito el nuevo cliente",
+                icon: "success",
+                buttons: "OK"
+            });
             get_api()
             reset()
         } else {
-            alert('No puedes enviar campos vacios');
+            swal({
+                title: "Error",
+                text: "¡No puedes enviar campos vacios!",
+                icon: "warning",
+                buttons: "OK"
+            });
         }
     }
 
+    const confirmDelete = (id) => {
+        swal({
+            title: "Eliminar elemento",
+            text: "Estas seguro de eliminar el elemento seleccionado!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    deleteId(id)
+                } else {
+                    swal("El elemento seleccionado esta ha salvo!");
+                }
+            });
+    }
 
     const deleteId = (id) => {
         JSON.stringify(id)
@@ -65,8 +93,13 @@ const Clientes = () => {
         }).then(res => res.json())
             .catch(error => console.error('Error:', error))
             .then(response => console.log('Succes:', response))
-        alert('Se ha eliminado correctamente la agenda')
         get_api()
+        swal({
+            title: "Eliminado",
+            text: "Se ha eliminado el cliente",
+            icon: "success",
+            buttons: "OK"
+        });
     }
 
     return (
@@ -90,7 +123,8 @@ const Clientes = () => {
                     <input type="text" className="form-control" id="direccion" onChange={handleInputChange} name="direccion" value={direccion} />
                 </div>
                 <div className="row">
-                    <button type="button" className="btn btn-primary col-2 m-2" id="registrar" onClick={save} >Registrar</button>
+                    <button type="button" className="btn btn-success col-2 m-2" id="registrar" onClick={save} >Registrar</button>
+                    <button type="button" title="Editar" className="btn btn-primary col-2 m-2" id="registrar" onClick={get_api}>Refrescar</button>
                 </div>
             </form>
             <div>
@@ -118,8 +152,8 @@ const Clientes = () => {
                                                     <FontAwesomeIcon icon={faEdit} />
                                                 </button>
                                             </Link>
-                                            <button className="btn btn-danger" onClick={() => {
-                                                deleteId(objeto.id)
+                                            <button className="btn btn-danger active" onClick={() => {
+                                                confirmDelete(objeto.id)
                                             }}>
                                                 <FontAwesomeIcon icon={faTrashAlt} />
                                             </button>
